@@ -1,16 +1,8 @@
 ﻿@ECHO OFF
 ::SETLOCAL ENABLEEXTENSIONS
 ::SETLOCAL ENABLEDELAYEDEXPANSION
-::SETLOCAL DISABLEEXTENSIONS
-::SETLOCAL DISABLEDELAYEDEXPANSION
 
-::TODO
-::RESOVLE INPUT ERROR ON INPUT WITH SPACES
-::DEFINE ERRORLEVELS WITH CORISPODING ERRORS
-::LOG Menu COMMANDS 
-::SCANS MENU ERRORS
-::fc, more and sort commands
-:Menu
+:MENU
 @ECHO OFF
 CLS
 BREAK
@@ -36,47 +28,46 @@ ECHO ~ 25. Network Information                      ~
 ECHO ~ 26. Mac Addresses                            ~
 ECHO ~ 27. User Accounts                            ~
 ECHO ~ 30. Public DNS List                          ~
-ECHO ~ 94. Restart Securinator                      ~
 ECHO ~ 95. Credits                                  ~
+ECHO ~ 96. Restart Securinator                      ~
 ECHO ~ 97. Restart                                  ~
 ECHO ~ 98. Shutdown                                 ~
 ECHO ~~~~~~~~~~~~~~PRESS 'E' TO EXIT~~~~~~~~~~~~~~~~~
 
-:: Add Tasklist option with pid 
-:: TASKKILL PID FROM .TXT FILE
-
-BREAK
 SET "RootDir=%~d0"
-ECHO  Date: %date% Time: %time%
+ECHO  Date:%date% Time:%time%
 
 ::need better crediential varIFication method
 VERIFY >NUL
 net session >NUL 2>NUL
-IF NOT ERRORLEVEL 1 ECHO  Administrator Privileges && set /a EP=1
-IF     ERRORLEVEL 1 ECHO  User Privileges && set /a EP=0
+IF NOT ERRORLEVEL 1 ECHO  Administrator Privileges
+IF     ERRORLEVEL 1 ECHO  User Privileges
 ECHO  %SystemDrive% %SystemRoot% %RootDir% %ComputerName% %UserName%
 
+::need to display all DNS's
+BREAK
 FOR /F "tokens=2 delims=:" %%a IN ('ipconfig /all ^| findstr /IC:"Default Gateway"') DO ECHO  Default Gateway:%%a
 FOR /F "tokens=2 delims=:" %%a IN ('ipconfig /all ^| findstr /IC:"Subnet Mask"') DO ECHO  Subnet Mask:%%a
 FOR /F "tokens=2 delims=:" %%a IN ('ipconfig /all ^| findstr /IC:"IPv4 Address"') DO ECHO  IP:%%a
 FOR /F "tokens=2 delims=:" %%a IN ('ipconfig /all ^| findstr /IC:"DHCP Server"') DO ECHO  DHCP Server:%%a
 FOR /F "tokens=2 delims=:" %%a IN ('ipconfig /all ^| findstr /IC:"DNS Servers"') DO ECHO  DNS Server:%%a
-
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-SET INPUT= 
+SET INPUT=
 SET /P INPUT=
-set list= 1 2 3 4 10 11 12 13 20 21 22 23 24 25 26 27 30 94 95 97 98 E TEST 
 
-::IF NOT "%INPUT%"=="%LIST%" GOTO Menu
+IF "%INPUT%"==" " GOTO :MENU
+
 IF /I '%INPUT%'=='1' GOTO  Selection1
 IF /I '%INPUT%'=='2' GOTO  Selection2
 IF /I '%INPUT%'=='3' GOTO  Selection3
 IF /I '%INPUT%'=='4' GOTO  Selection4
+
 IF /I '%INPUT%'=='10' GOTO  Selection10
 IF /I '%INPUT%'=='11' GOTO  Selection11
 IF /I '%INPUT%'=='12' GOTO  Selection12
 IF /I '%INPUT%'=='13' GOTO  Selection13
+
 IF /I '%INPUT%'=='20' GOTO  Selection20
 IF /I '%INPUT%'=='21' GOTO  Selection21
 IF /I '%INPUT%'=='22' GOTO  Selection22
@@ -85,15 +76,14 @@ IF /I '%INPUT%'=='24' GOTO  Selection24
 IF /I '%INPUT%'=='25' GOTO  Selection25
 IF /I '%INPUT%'=='26' GOTO  Selection26
 IF /I '%INPUT%'=='27' GOTO  Selection27
-IF /I '%INPUT%'=='30' GOTO  DNSList
+
 IF /I '%INPUT%'=='94' GOTO  rsec
 IF /I '%INPUT%'=='95' GOTO  Credits
 IF /I '%INPUT%'=='97' GOTO  Restart
 IF /I '%INPUT%'=='98' GOTO  Shutdown
 IF /I '%INPUT%'=='E' GOTO  Exit
-IF /I '%INPUT%'=='TEST' GOTO TEST
-
-GOTO :Menu
+IF /I '%INPUT%'=='TEST' GOTO  TEST
+GOTO :menu
 PAUSE>NUL
 
 :Selection1
@@ -103,10 +93,10 @@ TITLE The Great Scans Menu
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO ~~~~~~~~~~~~~~~~{  THE GREAT  }~~~~~~~~~~~~~~~~~
 ECHO ~~~{  Scanning Computer Securinator 2.3000  }~~~
-ECHO ~~~~~~~~~~{ ~ The Great Scans Menu ~ }~~~~~~~~~~
+ECHO ~~~~~~~~~~~{ ~ The Great Scans Menu  ~ }~~~~~~~~
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO ~  1. Create Scans Directory                   ~
-ECHO ~  2. Hardware Profile                         ~
+ECHO ~  2. Memory Chip                              ~
 ECHO ~  3. Ip Configuration                         ~
 ECHO ~  4. Network Statistics                       ~
 ECHO ~  5. File Tree                                ~
@@ -114,13 +104,17 @@ ECHO ~  6. Tasklist                                 ~
 ECHO ~  7. Driver Query                             ~
 ECHO ~  8. Scheduled Tasks                          ~
 ECHO ~  9. Attribute Command                        ~
-ECHO ~ 10. Port Scan 2                              ~
-ECHO ~ 11. Scans Directory                          ~
-ECHO ~ 12. Delete Scans Directory                   ~
+ECHO ~ 10. CPU Chip                                 ~
+ECHO ~ 11. Port Scan                                ~
+ECHO ~ 12. Bios Chip                                ~
+ECHO ~ 13. Scans Directory                          ~
+ECHO ~ 14. Delete Scans Directory                   ~
 ECHO ~~~~~~~~~~~~PRESS 'E' TO GO BACK~~~~~~~~~~~~~~~~
 
 SET INPUT=
-SET /P INPUT= 
+SET /P INPUT=
+
+IF "%INPUT%"==" " GOTO :scans
 
 IF /I '%INPUT%'=='1' GOTO  Sm1
 IF /I '%INPUT%'=='2' GOTO  Sm2
@@ -134,106 +128,109 @@ IF /I '%INPUT%'=='9' GOTO  Sm9
 IF /I '%INPUT%'=='10' GOTO  Sm10
 IF /I '%INPUT%'=='11' GOTO  Sm11
 IF /I '%INPUT%'=='12' GOTO  Sm12
+IF /I '%INPUT%'=='13' GOTO  Sm13
+IF /I '%INPUT%'=='14' GOTO  Sm14
 IF /I '%INPUT%'=='E' GOTO  Menu
 GOTO :scans
 PAUSE>NUL
 
-:REP
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO This process requires Administrator Privladges.
-ECHO Run Securinator as an Administrator or login to
-ECHO an Administrative Account and try again.
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PAUSE
-GOTO :scans
-
 :CSD
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO Create "Scans" Directory First...
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PAUSE
-GOTO :scans
-
-:CF
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO Creating File...
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO File does not exist...
 PAUSE
 GOTO :scans
 
 :FC
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO File Created...
-ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PAUSE
+goto :scans
+
+:Sm1
+IF NOT EXIST "%RootDir%"\scans MD "%RootDir%"\scans && GOTO :FC 
+IF ERRORLEVEL 1 ECHO Scans directory already exists...
 PAUSE
 GOTO :scans
 
-:Sm1
-IF EXIST "%RootDir%"\scans ( ECHO Scans directory already exists... && PAUSE && GOTO :scans ) ELSE ( MD "%RootDir%"\scans && GOTO :FC )
-
 :Sm2
-IF EXIST %RootDir%/scans/ ( ECHO Running Hardware Profiling Script...
-(	
-	WMIC BASEBOARD
-	WMIC BIOS
-	WMIC CPU
-	WMIC MEMORYCHIP
-	WMIC MEMPHYSICAL
-	WMIC CDROM
-	WMIC PRINTER
-	WMIC OS
-	WMIC NIC
-	WMIC SOUNDDEV
-) > %RootDir%/scans/"Hardware Profile".txt && CALL %RootDir%/scans/"Hardware Profile".txt && GOTO :scans ) ELSE GOTO :csd
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\mm.txt || ECHO Creating File... && WMIC MEMORYCHIP > "%RootDir%"\scans\mm.txt && goto :fc ) ELSE GOTO :CSD
+IF ERRORLEVEL 1 GOTO :ERR
+PAUSE
+GOTO :scans
 
 :Sm3
-IF EXIST "%RootDir%"\scans ( ECHO Creating File... && ipconfig /allcompartments /all > "%RootDir%"\scans\ip.txt && TYPE "%RootDir%"\scans\ip.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\ip.txt || ECHO Creating File... && ipconfig /allcompartments /all > "%RootDir%"\scans\ip.txt && goto :fc ) ELSE GOTO :CSD
+IF ERRORLEVEL 1 GOTO :ERR
+PAUSE
+GOTO :scans
 
 :Sm4
-IF %EP%==0 goto :REP
-IF EXIST "%RootDir%"\scans ( ECHO Creating File... && netstat -a -b -r -s -t > "%RootDir%"\scans\ns.txt && TYPE "%RootDir%"\scans\ns.txt && GOTO :fc ) ELSE GOTO :CSD
+::requires elevated privladges error message - find error code
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\ns.txt || ECHO Creating File... && netstat -a -b -r -s -t > "%RootDir%"\scans\ns.txt && goto :fc ) ELSE GOTO :CSD
+IF ERRORLEVEL 4 GOTO :ERR
+PAUSE
+GOTO :scans
 
 :Sm5
-IF EXIST "%RootDir%"\scans ( Tree /F > "%RootDir%"\scans\tr.txt && CALL "%RootDir%"\scans\tr.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\tr.txt || ECHO Creating File... && Tree /F > "%RootDir%"\scans\tr.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm6
-IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\tl.txt || ECHO Creating File... && tasklist /SVC > "%RootDir%"\scans\tl.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\tl.txt || ECHO Creating File... && tasklist /SVC > "%RootDir%"\scans\tl.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm7
-IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\dq.txt || ECHO Creating File... && driverquery /V > "%RootDir%"\scans\dq.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\dq.txt || ECHO Creating File... && driverquery /V > "%RootDir%"\scans\dq.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm8
-IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\st.txt || ECHO Creating File... && schtasks /query > "%RootDir%"\scans\st.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\st.txt || ECHO Creating File... && schtasks /query > "%RootDir%"\scans\st.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm9
-IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\at.txt || ECHO Creating File... && attrib /s > "%RootDir%"\scans\at.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\at.txt || ECHO Creating File... && attrib /s > "%RootDir%"\scans\at.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm10
-IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\pt.txt || ECHO Creating File... && wmic port > "%RootDir%"\scans\pt.txt && GOTO :fc ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\cu.txt || ECHO Creating File... && wmic cpu > "%RootDir%"\scans\cu.txt ) && goto :fc
 IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
 PAUSE
 GOTO :scans
 
 :Sm11
-IF EXIST "%RootDir%"\scans ( DIR "%RootDir%"\scans /O /P ) ELSE GOTO :CSD
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\pt.txt || ECHO Creating File... && wmic port > "%RootDir%"\scans\pt.txt ) && goto :fc
+IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR 
+PAUSE
+GOTO :scans
 
 :Sm12
-IF EXIST "%RootDir%"\scans ( RD /S /Q "%RootDir%"\scans && ECHO "scans" Directory Deleted... && PAUSE && GOTO :scans ) else GOTO :csd
+IF EXIST "%RootDir%"\scans ( TYPE "%RootDir%"\scans\bs.txt || ECHO Creating File... && wmic bios > "%RootDir%"\scans\bs.txt ) && goto :fc
+IF ERRORLEVEL 1 GOTO :CSD || GOTO :ERR
+PAUSE
+GOTO :scans
+
+:Sm13
+%RootDir%
+CD scans
+DIR /A
+PAUSE
+IF ERRORLEVEL 1 GOTO :scans || GOTO :ERR
+PAUSE
+GOTO :scans
+
+:Sm14
+IF EXIST "%RootDir%"\scans ( RD /S /Q "%RootDir%"\scans | ECHO "scans" Directory Deleted... ) ELSE GOTO :CSD
+IF ERRORLEVEL 1 GOTO :ERR
+PAUSE
+GOTO :scans
 
 :Selection2
 :rcvr
@@ -244,19 +241,20 @@ ECHO ~~~~~~~~~~~~~~~~{  THE GREAT  }~~~~~~~~~~~~~~~~~~
 ECHO ~~~~{  Scanning Computer Securinator 2.3000  }~~~
 ECHO ~~~~~~~~{ ~ The Great Recovery Screen ~ }~~~~~~~~
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO ~  1. Disk Sector Check                         ~
+ECHO ~  1. Check Disk                                ~
 ECHO ~  2. Windows Memory Diagnostic                 ~
-ECHO ~  3. System Recovery                           ~
-ECHO ~  4. Drive Format                              ~
-ECHO ~  5. Bitlocker Drive Encryption                ~
-ECHO ~  6. Disk Defragmentator                       ~
+ECHO ~  3. Recover                                   ~
+ECHO ~  4. Format                                    ~
+ECHO ~  5. Bitlocker                                 ~
+ECHO ~  6. Defrag                                    ~
 ECHO ~  7. Windows Maclicious Software Removel Tool  ~
 ECHO ~~~~~~~~~~~~~PRESS 'E' TO GO BACK~~~~~~~~~~~~~~~~
 
 SET INPUT=
 SET /P INPUT=
 
-IF "%INPUT%"==" " GOTO :Menu
+IF "%INPUT%"==" " GOTO :menu
+
 IF /I '%INPUT%'=='1' GOTO  dc1
 IF /I '%INPUT%'=='2' GOTO  dc2
 IF /I '%INPUT%'=='3' GOTO  dc3
@@ -266,7 +264,7 @@ IF /I '%INPUT%'=='6' GOTO  dc6
 IF /I '%INPUT%'=='7' GOTO  dc7
 IF /I '%INPUT%'=='8' GOTO  dc8
 IF /I '%INPUT%'=='9' GOTO  dc9
-IF /I '%INPUT%'=='E' GOTO  :Menu
+IF /I '%INPUT%'=='E' GOTO  :MENU
 
 GOTO :rcvr
 PAUSE>NUL
@@ -292,7 +290,7 @@ PAUSE
 GOTO :rcvr
 
 :dc5
-%SystemDrive%\Windows\System32\BitLockerWizard.exe
+%SystemDrive%\Windows\System3\BitLockerWizard.exe
 GOTO :rcvr
 
 :dc6
@@ -306,7 +304,7 @@ GOTO :rcvr
 GOTO :rcvr
 
 :dc10
-GOTO :Menu
+goto :menu
 
 
 :Selection3
@@ -333,7 +331,7 @@ IF /I [%choice%]==[3] GOTO SB200
 IF /I [%choice%]==[4] GOTO SB600
 IF /I [%choice%]==[5] GOTO T_U
 IF /I [%choice%]==[6] GOTO T_P
-IF /I [%choice%]==[E] GOTO :Menu
+IF /I [%choice%]==[E] GOTO :MENU
 CLS
 ECHO INCORRECT CHOICE CHOOSE AGAIN
 GOTO again
@@ -433,6 +431,7 @@ SET INPUT=
 SET /P INPUT=
 
 IF /I '%INPUT%'==' ' GOTO  :fnd
+
 IF /I '%INPUT%'=='1' GOTO  fnd1
 IF /I '%INPUT%'=='2' GOTO  fnd2
 IF /I '%INPUT%'=='3' GOTO  fnd3
@@ -442,78 +441,78 @@ IF /I '%INPUT%'=='6' GOTO  fnd6
 IF /I '%INPUT%'=='7' GOTO  fnd7
 IF /I '%INPUT%'=='8' GOTO  fnd8
 IF /I '%INPUT%'=='E' GOTO  Menu
-PAUSE>NUL
+pause>NUL
 
 :fnd1
-IF EXIST %RootDir%\"Log Files" ( Echo Logs Folder Already Exists! && Pause && GOTO :fnd )
-IF not EXIST %RootDir%\"Log Files" MD %RootDir%\"Log Files"
-XCOPY /E /Y %SYSTEMDRIVE%\Windows\*.log %RootDir%\"Log Files" && ( echo Log files copied && Pause && GOTO :fnd ) 
+if exist %RootDir%\"Log Files" ( Echo Logs Folder Already Exists! && Pause && goto :FND )
+if not exist %RootDir%\"Log Files" MD %RootDir%\"Log Files"
+XCOPY /E /Y %SYSTEMDRIVE%\Windows\*.log %RootDir%\"Log Files" && ( echo Log files copied && Pause && goto :FND ) 
 PAUSE
-GOTO :fnd`
+goto :fnd`
 
 :fnd2
 
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd3
 FIND *.jpg
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd4
 FIND *.PNG
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd5
 FIND *.avi
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd6
 FIND *.mp4
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd7
 FIND *.mp3
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd8
 FIND *.Wav
-PAUSE
-GOTO :fnd
+pause
+goto :fnd
 
 :fnd9
-PAUSE
-GOTO :Menu
+pause
+goto :Menu
 
 :Selection11
 CMD /U
 %RootDir%
-GOTO :Menu
+GOTO :menu
 
 :Selection12
 PowerShell
-GOTO :Menu
+GOTO :menu
 
 :Selection13
 start "~\iexplore.exe" "http://192.168.0.1"
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection14
 doskey
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection16
 CD "%RootDir%"\scans
 MD Admin.{ED7BA470-8E54-465E-825C-99712043E01C}
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection21
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -522,7 +521,7 @@ ECHO.
 systeminfo
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection22
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -531,7 +530,7 @@ ECHO.
 ipconfig /allcompartments /all |find "."|find /i /v "local"
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection23
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -540,7 +539,7 @@ ECHO.
 wmic port GET Endingaddress, Startingaddress
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection24
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -552,7 +551,7 @@ Wmic LOGICALDISK GET Description, VolumeSerialNumber, VolumeName
 Wmic VOLUME GET blocksize, bootvolume, filesystem
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection25
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -561,49 +560,53 @@ ECHO.
 netstat -a -b -r -s -t
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection26
-getmac /v
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ECHO Mac Addresses:
+ECHO.
+getmac
+ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :Selection27
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-wmic useraccount GET name, domain, localaccount
-wmic useraccount GET Description
-wmic useraccount GET SID
+wmic useraccount
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :DNSList
 ::auto appily dns, local, router, network, device
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ECHO 1. Bell Canada 207.164.234.193
-ECHO 2. CleanBrowsing 185.228.168.9
-ECHO 3. CleanBrowsing: 185.228.168.168
-ECHO 4. CloudFlare: 1.1.1.1
-ECHO 5. GOOGLE: 8.8.8.8
-ECHO 6. GOOGLE: 8.8.4.4
-ECHO 7. Norton A - 199.85.126.10
-ECHO 8. Norton B - 199.85.126.20
-ECHO 9. Norton C - 199.85.126.30
-ECHO 10. OpenDNS: 208.67.222.222
-ECHO 11. OpenDNS: 208.67.220.22
-ECHO 12. OpenDNS: 208.67.222.123
-ECHO 13. Quad9: 9.9.9.9
-ECHO 14. Rogers: 64.71.255.204
-ECHO 15. Rogers: 64.71.255.198
-ECHO 16. Yandex: 77.88.8.7
+ECHO Bell Canada 207.164.234.193
+ECHO CleanBrowsing 185.228.168.9
+ECHO CleanBrowsing: 185.228.168.168
+ECHO CloudFlare: 1.1.1.1
+ECHO GOOGLE: 8.8.8.8
+ECHO GOOGLE: 8.8.4.4
+ECHO Norton A - 199.85.126.10
+ECHO Norton B - 199.85.126.20
+ECHO Norton C - 199.85.126.30
+ECHO OpenDNS: 208.67.222.222
+ECHO OpenDNS: 208.67.220.22
+ECHO OpenDNS: 208.67.222.123
+ECHO Quad9: 9.9.9.9
+ECHO Rogers: 64.71.255.204
+ECHO Rogers: 64.71.255.198
+ECHO Yandex: 77.88.8.7
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 :rsec
 CLS
-START CMD /C %RootDir%\"Securinator 3.4.CMD" /B /MAX /SEPERATE /HIGH /REALTIME
-EXIT /B
+Echo Restarting...
+PAUSE
+START CMD /C %RootDir%\"Securinator 3.3.bat" 
+
 :Shutdown
 Shutdown /P /F
 
@@ -628,7 +631,9 @@ ECHO 01001001 00100000 01110101 01110011 01100101 00100000 00110010 00110001 001
 ECHO 01101000 01110100 01110100 01110000 01110011 00111010 00101111 00101111 01110111 01110111 01110111 00101110 01110010 01100001 01110000 01101001 01100100 01110100 01100001 01100010 01101100 01100101 01110011 00101110 01100011 01101111 01101101 00101111 01100011 01101111 01101110 01110110 01100101 01110010 01110100 00101111 01101110 01110101 01101101 01100010 01100101 01110010 00101111 01100001 01110011 01100011 01101001 01101001 00101101 01110100 01101111 00101101 01100010 01101001 01101110 01100001 01110010 01111001 00101110 01101000 01110100 01101101 01101100
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PAUSE
-GOTO :Menu
+GOTO :menu
+
+
 
 :ERR
 CLS
@@ -644,38 +649,34 @@ ECHO ~ Vallently Restart in an attepmt to fix it.   ~
 ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PAUSE
-GOTO :rsec
+START CMD /C %RootDir%\"Securinator 3.3.bat" && EXIT /B
 
 :TEST
 
 PAUSE
-GOTO :Menu
+GOTO :menu
 
 ToDo:
 
-	Fuctionality
-		Secure Internet
-			Secure DNS server list and links
-			Secure Time server list and links
-			Secure Proxy server list and links
-			Secure Cloud Storage server list and links
-			Secure Remote server list and links
-			Secure Virtual Server List and links
-		
-		folder list .txt file Folder backup
-		file compairson
-		delete all else
-		
-	Tobe Menus.
+Fuctionality
+	Secure DNS server list
+	Secure Time server list
+	Secure Proxy server list
+	Secure Cloud Storage server list
+	Secure Remote server list
+	Secure Virtual Server List
+
+
+Tobe menus.
+	User Accounts
+		UserAccountControlSettings - Acsess Notification
+		C:\Windows\winsxs\x86_microsoft-windows-u..ountcontrolsettings_31bf3856ad364e35_6.1.7601.17514_none_85ac7bd736dda285
+
 		User Accounts
-			UserAccountControlSettings - Acsess NotIFication
-			C:\Windows\winsxs\x86_microsoft-windows-u..ountcontrolsettings_31bf3856ad364e35_6.1.7601.17514_none_85ac7bd736dda285
+		C:\Windows\winsxs\x86_microsoft-windows-netplwiz-exe_31bf3856ad364e35_6.1.7600.16385_none_ed2d0ae971b57e8d
 
-			User Accounts
-			C:\Windows\winsxs\x86_microsoft-windows-netplwiz-exe_31bf3856ad364e35_6.1.7600.16385_none_ed2d0ae971b57e8d
-
-			Username and Password back up
-			WMIC GROUP
+		Username and Password back up
+		WMIC GROUP
 		
 	File Creation
 		iexpress.exe - Make .exe file
@@ -688,11 +689,6 @@ ToDo:
 
 	Error Logs and Events
 		c:/windows/system32/eventvwr.exe
-		windows error log thing
-		dirext x error log
-		.net error log
-		runtime
-		internet exploroer error log
 
 	Windows Assitence
 		mblctr
@@ -700,21 +696,23 @@ ToDo:
 		onscreen key board
 		Voice reader thing
 
+	Windows Configuration Menu
+		regedt32.exe
+		msconfig
+
+
 	Other useful windows scripts
-		C:\Windows\System32
-			DeviceProperties.exe
-			credwiz.exe
-			EhStorAuthn.exe ***
-			Msinfo32
-			WMIC NTEVENTLOG
-		
+	C:\Windows\System32
+		DeviceProperties.exe
+		credwiz.exe
+		EhStorAuthn.exe ***
+		Msinfo32
+		WMIC NTEVENTLOG
 	Black list.
 			Auto ban,
 				known ip's,
 				file accses
 				websites
-				media
-				applications
 
 	Auto Secure
 		Close open ports
@@ -726,19 +724,11 @@ ToDo:
 		change default usernames and passwords
 		Router
 		windows
-		paraental controlls
-		
+
 	Backup
 		create System restore point
 		backup usernames and passwrods
 		back up credentials
 		back up drives
 
-	The Great things Windows Does Menu
-		Registry editor
-		Msconfig
-		task manager
-		resorce monitor
-		
-	Netsh
-		netsh wlan show all
+ m
